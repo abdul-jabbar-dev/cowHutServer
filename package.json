@@ -2,8 +2,8 @@
   "name": "digital-cow-hut",
   "version": "1.0.0",
   "description": "",
-  "engines": {
-    "node": "16.x"
+"engines": {
+    "node": ">=16"
   },
   "main": "dist/server.js", 
   "scripts": {
