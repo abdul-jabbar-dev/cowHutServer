@@ -12,12 +12,18 @@ const zodValidation_1 = __importDefault(require("./middlewares/zodValidation"));
 const user_zodValidator_1 = require("./app/modules/user/user.zodValidator");
 const cow_route_1 = __importDefault(require("./app/modules/cow/cow.route"));
 const order_route_1 = __importDefault(require("./app/modules/order/order.route"));
+const admin_route_1 = __importDefault(require("./app/modules/admin/admin.route"));
+const auth_route_1 = __importDefault(require("./app/modules/auth/auth.route"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
+app.use((0, cookie_parser_1.default)());
 app.use("/api/v1/users", user_route_1.default);
+app.use("/api/v1/admins", admin_route_1.default);
 app.use("/api/v1/cows", cow_route_1.default);
 app.use("/api/v1/orders", order_route_1.default);
+app.use("/api/v1/auth", auth_route_1.default);
 app.post("/api/v1/auth/signup", (0, zodValidation_1.default)(user_zodValidator_1.createUserZodValidator), user_controller_1.default.createUser);
 app.get("/", (req, res) => {
     res.send("home");

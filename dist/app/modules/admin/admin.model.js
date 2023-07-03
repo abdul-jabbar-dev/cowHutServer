@@ -15,19 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const config_1 = __importDefault(require("../../../config"));
-const userSchema = new mongoose_1.Schema({
-    address: {
-        type: String,
-        required: true,
-    },
-    budget: {
-        type: Number,
-        required: true,
-    },
-    income: {
-        type: Number,
-        required: true,
-    },
+const AdminSchema = new mongoose_1.Schema({
     name: {
         firstName: {
             type: String,
@@ -42,28 +30,33 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    address: {
+        type: String,
+        required: true,
+    },
     phoneNumber: {
         type: String,
         unique: true,
         required: true,
     },
     role: {
+        enum: ["admin"],
         type: String,
-        required: true,
-        enum: ["seller", "buyer"],
+        default: "admin",
     },
 }, {
     timestamps: true,
 });
-userSchema.static("matchPassword", function (givenPassword, storedPassword) {
+AdminSchema.pre("save", function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        this.password = yield bcrypt_1.default.hash(this.password, config_1.default.SALT);
+        next();
+    });
+});
+AdminSchema.static("matchPassword", function (givenPassword, storedPassword) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield bcrypt_1.default.compare(givenPassword, storedPassword);
     });
 });
-userSchema.static("passwordHash", function (givenPassword) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield bcrypt_1.default.hash(givenPassword, config_1.default.SALT);
-    });
-});
-const USER = (0, mongoose_1.model)("user", userSchema);
-exports.default = USER;
+const ADMIN = (0, mongoose_1.model)("admin", AdminSchema);
+exports.default = ADMIN;

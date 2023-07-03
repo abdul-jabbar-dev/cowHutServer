@@ -8,6 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -41,7 +52,7 @@ const getAUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 });
 const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield user_service_1.default.createUserDB(req.body);
+        const _a = yield user_service_1.default.createUserDB(req.body), { password } = _a, result = __rest(_a, ["password"]);
         (0, sendResponse_1.default)(res, {
             message: "Users created successfully",
             data: result,
@@ -65,6 +76,20 @@ const updateAUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         next(error);
     }
 });
+const updateMyProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { _id } = req.user;
+        const updateInfo = req.body;
+        const result = yield user_service_1.default.updateMyProfile(_id, updateInfo);
+        (0, sendResponse_1.default)(res, {
+            message: "User's information retrieved successfully",
+            data: Object.assign(Object.assign({}, result), { password: undefined, role: undefined }),
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
 const deleteAUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
@@ -78,11 +103,26 @@ const deleteAUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         next(error);
     }
 });
+const getMyProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { _id } = req.user;
+        const result = yield user_service_1.default.getAUserDB(_id);
+        (0, sendResponse_1.default)(res, {
+            message: "User's information retrieved successfully",
+            data: Object.assign(Object.assign({}, result), { password: undefined, role: undefined }),
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
 const userController = {
     getAllUser,
     createUser,
     getAUser,
     updateAUser,
     deleteAUser,
+    getMyProfile,
+    updateMyProfile,
 };
 exports.default = userController;

@@ -19,6 +19,7 @@ const createAOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         const cowId = req.body.cow;
         const buyerId = req.body.buyer;
         const result = yield order_service_1.default.createAOrderDB(cowId, buyerId);
+        console.log(result);
         (0, sendResponse_1.default)(res, {
             message: "Orders retrieved successfully",
             data: result,
@@ -30,7 +31,8 @@ const createAOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
 });
 const getAllOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield order_service_1.default.getAllOrderDB();
+        const user = req.user;
+        const result = yield order_service_1.default.getAllOrderDB(user);
         (0, sendResponse_1.default)(res, {
             message: "Orders retrieved successfully",
             data: result,
@@ -40,5 +42,19 @@ const getAllOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         next(error);
     }
 });
-const orderController = { createAOrder, getAllOrder };
+const getAOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const user = req.user;
+        const result = yield order_service_1.default.getAOrderDB(id, user);
+        (0, sendResponse_1.default)(res, {
+            message: "Order information retrieved successfully",
+            data: result,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+const orderController = { createAOrder, getAllOrder, getAOrder };
 exports.default = orderController;
