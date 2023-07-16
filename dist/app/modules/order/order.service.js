@@ -16,7 +16,6 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const cow_model_1 = __importDefault(require("../cow/cow.model"));
 const user_model_1 = __importDefault(require("../user/user.model"));
 const order_model_1 = __importDefault(require("./order.model"));
-const RoleEnums_1 = __importDefault(require("../../../types/Enums/RoleEnums"));
 const createAOrderDB = (cowId, buyerId) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
     try {
@@ -71,66 +70,15 @@ const createAOrderDB = (cowId, buyerId) => __awaiter(void 0, void 0, void 0, fun
         session.endSession();
     }
 });
-const getAllOrderDB = (user) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllOrderDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let result;
-        if (user.role === RoleEnums_1.default.ADMIN) {
-            result = yield order_model_1.default.find({})
-                .lean()
-                .populate("buyer", "-password")
-                .populate("cow")
-                .populate("seller", "-password");
-        }
-        else if (user.role === RoleEnums_1.default.BUYER) {
-            result = yield order_model_1.default.find({ buyer: user.role }, { buyer: 0 })
-                .lean()
-                .populate("cow")
-                .populate("seller", "-password");
-        }
+        const result = yield order_model_1.default.find();
+        console.log(result);
         return result;
     }
     catch (error) {
         throw error;
     }
 });
-const getAOrderDB = (order_id, authorizer) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        let result;
-        if (authorizer.role == RoleEnums_1.default.ADMIN) {
-            result = yield order_model_1.default.findOne({ _id: order_id });
-        }
-        else {
-            let roleFind;
-            if (authorizer.role === RoleEnums_1.default.BUYER) {
-                roleFind = {
-                    buyer: authorizer._id,
-                };
-            }
-            else if (authorizer.role === RoleEnums_1.default.BUYER) {
-                roleFind = {
-                    seller: authorizer._id,
-                };
-            }
-            result = yield order_model_1.default.findOne(Object.assign({ _id: order_id }, roleFind), { cow: 1, buyer: 1 });
-        }
-        if (!result) {
-            throw new Error("Invalid order");
-        }
-        result = yield (yield result.populate("buyer")).populate({
-            path: "cow",
-            populate: "seller",
-        });
-        if (result.buyer) {
-            result.buyer.password = undefined;
-        }
-        if (result && result.cow && result.cow.seller) {
-            result.cow.seller.password = undefined;
-        }
-        return result;
-    }
-    catch (error) {
-        throw error;
-    }
-});
-const orderService = { createAOrderDB, getAllOrderDB, getAOrderDB };
+const orderService = { createAOrderDB, getAllOrderDB };
 exports.default = orderService;

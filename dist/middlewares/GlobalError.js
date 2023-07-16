@@ -14,11 +14,7 @@ const globalError = (err, req, res, next) => {
         stack: "",
         statusCode: 400,
     };
-    if (typeof err === "string") {
-        error.errorMessages = [{ message: err, path: "" }];
-        error.message = err;
-    }
-    else if ((err === null || err === void 0 ? void 0 : err.name) === "ValidationError") {
+    if ((err === null || err === void 0 ? void 0 : err.name) === "ValidationError") {
         const { message, stack, errorMessages, statusCode } = (0, validationErrorHandler_1.default)(err);
         error.message = message;
         error.stack = stack;
